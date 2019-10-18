@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploymentPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://ibm.com/ws/objectgrid/deploymentPolicy ../deploymentPolicy.xsd"
+	xmlns="http://ibm.com/ws/objectgrid/deploymentPolicy">
+	<objectgridDeployment objectgridName="EOD">
+		<mapSet name="eodSet" minSyncReplicas="0" maxSyncReplicas="0" maxAsyncReplicas="0"
+			placementStrategy="PER_CONTAINER">
+			<map ref="sync" />
+		</mapSet>
+	</objectgridDeployment>
+</deploymentPolicy>
