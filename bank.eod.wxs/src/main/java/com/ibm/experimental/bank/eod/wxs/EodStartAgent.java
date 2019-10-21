@@ -3,13 +3,14 @@ package com.ibm.experimental.bank.eod.wxs;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.ibm.experimental.bank.eod.IGlobalManager;
 import com.ibm.experimental.bank.eod.IProcessingListener;
+import com.ibm.experimental.bank.eod.def.TimeUtils;
 import com.ibm.websphere.objectgrid.ObjectMap;
 import com.ibm.websphere.objectgrid.Session;
 
 /**
  * EOD Agent to put processing on Pause
+ * 
  * @author Ivan Makarov <ivan.makarov@ru.ibm.com>
  *
  */
@@ -27,12 +28,13 @@ public class EodStartAgent extends AbstractEodAgent implements IProcessingListen
 		try {
 			synchronized (this) {
 				local.eodStart();
-				if (local.count() > 0)
-					try {
-						wait(IGlobalManager.MAX_WAIT);
-					} catch (InterruptedException e) {
-						log.error("EOD phase processing interrupted", e);
-					}
+				try {
+					long now = System.currentTimeMillis();
+					while (local.count() > 0 && TimeUtils.waitCheck(now))
+						wait(TimeUtils.waitTime(now));
+				} catch (InterruptedException e) {
+					log.error("EOD phase processing interrupted", e);
+				}
 			}
 			log.info("------ EOD paused ------");
 			return LocalManager.getInstance().count();

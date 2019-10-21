@@ -6,6 +6,7 @@ import com.ibm.experimental.bank.eod.IEodListener;
 import com.ibm.experimental.bank.eod.IGlobalManager;
 import com.ibm.experimental.bank.eod.IProcessingListener;
 import com.ibm.experimental.bank.eod.def.AbstractGlobalManager;
+import com.ibm.experimental.bank.eod.def.TimeUtils;
 /**
  * Local Test: Global Manager
  * @author Ivan Makarov <ivan.makarov@ru.ibm.com>
@@ -37,10 +38,11 @@ public class GlobalManager extends AbstractGlobalManager implements IProcessingL
 			for (IEodListener listener : listeners) {
 				listener.eodStart();
 			}
-
-			if (counter.get() > 0)
+			
 				try {
-					eodLock.wait(IGlobalManager.MAX_WAIT);
+					long now = System.currentTimeMillis();
+					while (counter.get() > 0 && TimeUtils.waitCheck(now))
+						eodLock.wait(TimeUtils.waitTime(now));
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

@@ -5,10 +5,9 @@ import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.ibm.experimental.bank.eod.IEodListener;
-import com.ibm.experimental.bank.eod.IGlobalManager;
 import com.ibm.experimental.bank.eod.ILocalManager;
-import com.ibm.experimental.bank.eod.IProcessingListener;
 import com.ibm.experimental.bank.eod.IMessage;
+import com.ibm.experimental.bank.eod.IProcessingListener;
 
 /**
  * Base class for Local Manager <br>
@@ -36,7 +35,10 @@ public abstract class AbstractLocalManager implements ILocalManager, IEodListene
 	private synchronized void checkEod() {
 		if (eod)
 			try {
-				wait(IGlobalManager.MAX_WAIT);
+				long now = System.currentTimeMillis();
+				while (eod && TimeUtils.waitCheck(now))
+					wait(TimeUtils.waitTime(now));
+				eod = false;
 			} catch (InterruptedException e) {
 				throw new RuntimeException(e.getMessage(), e);
 			}

@@ -61,7 +61,7 @@ public class Processor extends AbstractProcessor implements Runnable {
 		try {
 			Thread.sleep(500);
 			log.info("EOD completed");
-//			Thread.sleep(2000);
+//			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			log.error("EOD phase interrupted", e);
 		}
